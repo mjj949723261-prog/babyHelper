@@ -16,8 +16,9 @@ const props = defineProps<{
   weeklySummaryIcon: string
 }>()
 
-const visibleTodos = computed(() => props.todos.slice(0, 3))
-const shouldShowTodoMore = computed(() => props.todos.length > visibleTodos.value.length)
+const pendingTodos = computed(() => props.todos.filter((todo) => !todo.checked))
+const visibleTodos = computed(() => pendingTodos.value.slice(0, 3))
+const shouldShowTodoMore = computed(() => pendingTodos.value.length > visibleTodos.value.length)
 
 function openTodoPage() {
   navigateTo('/pages/todos/index', '打开计划页失败')
@@ -61,19 +62,23 @@ function openWeeklySummary() {
           v-for="todo in visibleTodos"
           :key="todo.id"
           class="todo-row"
-          :class="{ done: todo.checked }"
           @tap="openTodoDetail(todo.id)"
           @click="openTodoDetail(todo.id)"
         >
-          <view class="check-box" :class="{ checked: todo.checked }"></view>
+          <view
+            v-if="todo.categoryLabel || todo.tag"
+            class="todo-icon-wrap"
+            :class="todo.category === 'special' ? 'primary' : 'secondary'"
+          >
+            <text class="todo-tag">{{ todo.categoryLabel || todo.tag }}</text>
+          </view>
           <view class="todo-copy">
-            <view class="todo-main">
-              <text v-if="todo.time" class="todo-time">{{ todo.time }}</text>
+            <view class="todo-top">
               <text class="todo-label">{{ todo.title }}</text>
+              <text v-if="todo.time" class="todo-time">{{ todo.time }}</text>
             </view>
             <text v-if="todo.note" class="todo-note">{{ todo.note }}</text>
           </view>
-          <text v-if="todo.categoryLabel || todo.tag" class="todo-tag">{{ todo.categoryLabel || todo.tag }}</text>
         </view>
       </view>
       <view
@@ -132,6 +137,7 @@ function openWeeklySummary() {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding-left: 4px;
 }
 
 .recent-more,
@@ -184,56 +190,43 @@ function openWeeklySummary() {
 .todo-list {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 10px;
 }
 
 .todo-row {
   display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 12px 0;
-  border-bottom: 1px solid rgba(208, 195, 197, 0.28);
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(245, 230, 232, 0.54);
 }
 
-.todo-row:first-child {
-  padding-top: 0;
+.todo-icon-wrap {
+  min-width: 40px;
+  height: 40px;
+  padding: 0 10px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.todo-row:last-child {
-  padding-bottom: 0;
-  border-bottom: none;
+.todo-icon-wrap.primary {
+  background: #f5e6e8;
 }
 
-.check-box {
-  width: 20px;
-  height: 20px;
-  border-radius: 6px;
-  border: 1px solid #d0c3c5;
-  background: #fff;
-}
-
-.check-box.checked {
-  background: #665c5e;
-  border-color: #665c5e;
-  position: relative;
-}
-
-.check-box.checked::after {
-  content: '';
-  position: absolute;
-  left: 5px;
-  top: 2px;
-  width: 6px;
-  height: 10px;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  transform: rotate(45deg);
+.todo-icon-wrap.secondary {
+  background: #ebe1d7;
 }
 
 .todo-label {
   color: #1d1b1b;
-  font-size: 15px;
-  line-height: 22px;
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 500;
 }
 
 .todo-copy {
@@ -243,10 +236,11 @@ function openWeeklySummary() {
   gap: 2px;
 }
 
-.todo-main {
+.todo-top {
   display: flex;
-  align-items: baseline;
-  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .todo-time {
@@ -258,20 +252,17 @@ function openWeeklySummary() {
 }
 
 .todo-note {
-  color: #9f8f95;
+  color: #4d4546;
   font-size: 11px;
   line-height: 16px;
 }
 
 .todo-tag {
-  flex-shrink: 0;
-  padding: 4px 8px;
-  border-radius: 9999px;
-  background: #f8f2f2;
   color: #7f7576;
   font-size: 10px;
   line-height: 14px;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .todo-footer-link {
@@ -293,15 +284,6 @@ function openWeeklySummary() {
 
 .todo-footer-icon {
   font-size: 16px;
-}
-
-.todo-row.done .todo-label,
-.todo-row.done .todo-note {
-  opacity: 0.5;
-}
-
-.todo-row.done .todo-label {
-  text-decoration: line-through;
 }
 
 .recent-more {
