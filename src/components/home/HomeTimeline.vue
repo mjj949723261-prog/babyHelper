@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { ActivityItem, TodoItem } from '../../types/home'
+import { navigateTo, showToast } from '../../utils/runtime-nav'
 
 const props = defineProps<{
   title: string
@@ -15,11 +16,32 @@ const props = defineProps<{
   weeklySummaryIcon: string
 }>()
 
-const completedCount = computed(() => props.todos.filter((todo) => todo.checked).length)
-const shouldShowTodoMore = computed(() => props.todos.length > 3)
+const visibleTodos = computed(() => props.todos.slice(0, 3))
+const shouldShowTodoMore = computed(() => props.todos.length > visibleTodos.value.length)
 
 function openTodoPage() {
-  uni.navigateTo({ url: '/pages/todos/index' })
+  navigateTo('/pages/todos/index', '打开计划页失败')
+}
+
+function openTodoCreatePage() {
+  navigateTo('/pages/todos/create/index', '打开新增页失败')
+}
+
+function openTodoDetail(id: string) {
+  if (!id) {
+    showToast('任务信息缺失')
+    return
+  }
+
+  navigateTo(`/pages/todos/detail/index?id=${id}`, '打开详情失败')
+}
+
+function openTimelinePage() {
+  navigateTo('/pages/timeline/index', '打开时间线失败')
+}
+
+function openWeeklySummary() {
+  showToast('后续接成长报告详情')
 }
 </script>
 
@@ -29,32 +51,48 @@ function openTodoPage() {
       <view class="todo-head-copy">
         <h3 class="section-title">{{ title }}</h3>
       </view>
-      <button class="add-button">
+      <view class="add-button" hover-class="is-hover" @tap="openTodoCreatePage" @click="openTodoCreatePage">
         <text class="material-symbols-outlined add-icon">{{ addIcon }}</text>
-      </button>
+      </view>
     </view>
     <view class="todo-card">
       <view class="todo-list">
-        <view v-for="todo in todos" :key="todo.id" class="todo-row" :class="{ done: todo.checked }">
+        <view
+          v-for="todo in visibleTodos"
+          :key="todo.id"
+          class="todo-row"
+          :class="{ done: todo.checked }"
+          @tap="openTodoDetail(todo.id)"
+          @click="openTodoDetail(todo.id)"
+        >
           <view class="check-box" :class="{ checked: todo.checked }"></view>
           <view class="todo-copy">
-            <text class="todo-label">{{ todo.title }}</text>
+            <view class="todo-main">
+              <text v-if="todo.time" class="todo-time">{{ todo.time }}</text>
+              <text class="todo-label">{{ todo.title }}</text>
+            </view>
             <text v-if="todo.note" class="todo-note">{{ todo.note }}</text>
           </view>
-          <text v-if="todo.tag" class="todo-tag">{{ todo.tag }}</text>
+          <text v-if="todo.categoryLabel || todo.tag" class="todo-tag">{{ todo.categoryLabel || todo.tag }}</text>
         </view>
       </view>
-      <button v-if="shouldShowTodoMore" class="todo-footer-link" @tap="openTodoPage">
+      <view
+        v-if="shouldShowTodoMore"
+        class="todo-footer-link"
+        hover-class="is-hover"
+        @tap="openTodoPage"
+        @click="openTodoPage"
+      >
         <text>{{ todoMoreLabel }}</text>
         <text class="material-symbols-outlined todo-footer-icon">chevron_right</text>
-      </button>
+      </view>
     </view>
   </section>
 
   <section class="recent-section">
     <view class="recent-head">
       <h3 class="section-title">{{ recentTitle }}</h3>
-      <text class="recent-more">{{ recentMoreLabel }}</text>
+      <text class="recent-more" @tap="openTimelinePage" @click="openTimelinePage">{{ recentMoreLabel }}</text>
     </view>
     <view class="activity-list">
       <view v-for="activity in activities" :key="activity.title" class="activity-card">
@@ -73,7 +111,7 @@ function openTodoPage() {
   </section>
 
   <section class="summary-section">
-    <view class="summary-card">
+    <view class="summary-card" @tap="openWeeklySummary" @click="openWeeklySummary">
       <view class="summary-left">
         <text class="material-symbols-outlined summary-icon">{{ weeklySummaryIcon }}</text>
         <text class="summary-title">{{ weeklySummaryTitle }}</text>
@@ -94,6 +132,11 @@ function openTodoPage() {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.recent-more,
+.summary-card {
+  cursor: pointer;
 }
 
 .todo-head-copy {
@@ -136,34 +179,6 @@ function openTodoPage() {
   padding: 18px 20px;
   background: rgba(255, 255, 255, 0.92);
   box-shadow: 0 14px 32px rgba(173, 138, 142, 0.08);
-}
-
-.todo-summary {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 14px;
-}
-
-.todo-progress {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-}
-
-.todo-progress-value {
-  color: #665c5e;
-  font-size: 18px;
-  line-height: 24px;
-  font-weight: 700;
-}
-
-.todo-progress-label {
-  color: #9f8f95;
-  font-size: 11px;
-  line-height: 16px;
-  font-weight: 600;
 }
 
 .todo-list {
@@ -226,6 +241,20 @@ function openTodoPage() {
   display: flex;
   flex-direction: column;
   gap: 2px;
+}
+
+.todo-main {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.todo-time {
+  flex-shrink: 0;
+  color: #665c5e;
+  font-size: 12px;
+  line-height: 18px;
+  font-weight: 600;
 }
 
 .todo-note {

@@ -1,5 +1,14 @@
 import type { ActivityItem, QuickAction, TodoItem } from '../types/home'
-import type { IntroBlock, ModuleBlock, RecordOption, SuggestionEntry, TimelineEntry, TodoMeta } from '../types/mock'
+import type {
+  IntroBlock,
+  ModuleBlock,
+  RecordOption,
+  SuggestionEntry,
+  TimelineEntry,
+  TodoCalendarDay,
+  TodoCalendarFilter,
+  TodoMeta
+} from '../types/mock'
 
 export const homeContent = {
   header: {
@@ -157,4 +166,74 @@ export const todoDetailContent = {
   },
   helper: '可先处理护理和健康类事项，再补记录与整理。',
   ctaLabel: '新增待办'
+}
+
+export const todoCalendarContent: {
+  monthLabel: string
+  days: TodoCalendarDay[]
+  filters: TodoCalendarFilter[]
+  items: TodoItem[]
+} = {
+  monthLabel: '2023年10月',
+  days: [
+    { label: '日', date: '15' },
+    { label: '一', date: '16' },
+    { label: '二', date: '17' },
+    { label: '三', date: '18', active: true },
+    { label: '四', date: '19' },
+    { label: '五', date: '20' },
+    { label: '六', date: '21' }
+  ],
+  filters: [
+    { key: 'all', label: '全部', active: true },
+    { key: 'special', label: '特殊' },
+    { key: 'daily', label: '日常' }
+  ],
+  items: [
+    {
+      id: 'calendar-todo-1',
+      title: '小憩',
+      checked: false,
+      note: '预计 45 分钟，保持室内昏暗',
+      time: '10:30',
+      timeRange: '今天 10:30 - 11:15',
+      scheduleLabel: '每天',
+      category: 'special',
+      categoryLabel: '特殊',
+      icon: 'bedtime',
+      reasonTitle: '为什么这很重要？',
+      reasonText: '充足的高质量小憩有助于宝宝的大脑发育，稳定情绪，避免过度疲劳导致的夜哭。',
+      accent: 'primary'
+    },
+    {
+      id: 'calendar-todo-2',
+      title: '喂奶',
+      checked: false,
+      note: '配方奶 120ml，注意拍嗝',
+      time: '08:00',
+      timeRange: '今天 08:00 - 08:20',
+      scheduleLabel: '每天',
+      category: 'daily',
+      categoryLabel: '日常',
+      icon: 'restaurant',
+      reasonTitle: '为什么这很重要？',
+      reasonText: '规律喂养能帮助宝宝建立稳定节奏，也方便你更轻松地判断后续状态。',
+      accent: 'tertiary'
+    },
+    {
+      id: 'calendar-todo-3',
+      title: '换尿不湿',
+      checked: true,
+      note: '早晨第一次清理',
+      time: '06:30',
+      timeRange: '今天 06:30 - 06:40',
+      scheduleLabel: '每天',
+      category: 'daily',
+      categoryLabel: '日常',
+      icon: 'checkroom',
+      reasonTitle: '为什么这很重要？',
+      reasonText: '及时更换能让宝宝更舒适，也能减少红屁股和睡眠被打断的情况。',
+      accent: 'tertiary'
+    }
+  ]
 }

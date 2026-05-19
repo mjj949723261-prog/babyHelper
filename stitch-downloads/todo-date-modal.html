@@ -1,0 +1,334 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport">
+<title>选择日期</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary": "#5a605b",
+                      "primary-container": "#f5e6e8",
+                      "secondary-fixed": "#ebe1d7",
+                      "secondary-fixed-dim": "#cec5bc",
+                      "primary-fixed-dim": "#d1c3c5",
+                      "on-tertiary-fixed": "#181d19",
+                      "surface-container-highest": "#e6e1e1",
+                      "on-tertiary-fixed-variant": "#434844",
+                      "surface-tint": "#665c5e",
+                      "surface-container-high": "#ece7e6",
+                      "inverse-surface": "#323030",
+                      "inverse-on-surface": "#f5efef",
+                      "surface": "#fef8f8",
+                      "on-surface-variant": "#4d4546",
+                      "secondary": "#645d56",
+                      "on-secondary": "#ffffff",
+                      "tertiary-fixed": "#dfe4de",
+                      "on-background": "#1d1b1b",
+                      "surface-container": "#f2edec",
+                      "on-tertiary-container": "#656a65",
+                      "on-secondary-fixed-variant": "#4c463f",
+                      "on-primary-container": "#716668",
+                      "outline": "#7f7576",
+                      "on-error-container": "#93000a",
+                      "outline-variant": "#d0c3c5",
+                      "primary": "#665c5e",
+                      "secondary-container": "#ebe1d7",
+                      "surface-container-low": "#f8f2f2",
+                      "on-tertiary": "#ffffff",
+                      "on-surface": "#1d1b1b",
+                      "error-container": "#ffdad6",
+                      "inverse-primary": "#d1c3c5",
+                      "primary-fixed": "#eedfe1",
+                      "tertiary-container": "#e6ebe5",
+                      "surface-dim": "#ded9d8",
+                      "tertiary-fixed-dim": "#c3c8c2",
+                      "on-primary-fixed": "#211a1b",
+                      "background": "#fef8f8",
+                      "surface-variant": "#e6e1e1",
+                      "on-secondary-fixed": "#1f1b15",
+                      "surface-container-lowest": "#ffffff",
+                      "error": "#ba1a1a",
+                      "surface-bright": "#fef8f8",
+                      "on-primary-fixed-variant": "#4e4446",
+                      "on-primary": "#ffffff",
+                      "on-secondary-container": "#6a635c",
+                      "on-error": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "1rem",
+                      "lg": "2rem",
+                      "xl": "3rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "element-gap": "12px",
+                      "tap-target-min": "48px",
+                      "card-padding": "20px",
+                      "section-gap": "32px",
+                      "page-margin": "24px"
+              },
+              "fontFamily": {
+                      "label-md": ["Plus Jakarta Sans"],
+                      "display": ["Plus Jakarta Sans"],
+                      "label-sm": ["Plus Jakarta Sans"],
+                      "headline-md": ["Plus Jakarta Sans"],
+                      "body-md": ["Plus Jakarta Sans"],
+                      "headline-lg": ["Plus Jakarta Sans"],
+                      "body-lg": ["Plus Jakarta Sans"]
+              },
+              "fontSize": {
+                      "label-md": ["13px", {"lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                      "display": ["30px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "label-sm": ["11px", {"lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "600"}],
+                      "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "body-md": ["15px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "body-lg": ["17px", {"lineHeight": "26px", "fontWeight": "400"}]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .soft-shadow {
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* Bottom Sheet Animation */
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .sheet-container {
+            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .backdrop {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface-variant font-body-md text-on-surface antialiased h-screen w-full overflow-hidden flex flex-col items-center justify-center relative">
+<!-- Simulated Background Content (just to show it's an overlay) -->
+<div class="absolute inset-0 z-0 flex flex-col items-center justify-center opacity-50">
+<div class="w-full max-w-md p-page-margin space-y-element-gap">
+<div class="h-40 bg-surface rounded-xl shadow-sm"></div>
+<div class="h-24 bg-surface rounded-xl shadow-sm"></div>
+<div class="h-24 bg-surface rounded-xl shadow-sm"></div>
+</div>
+</div>
+<!-- Backdrop Overlay -->
+<div class="backdrop absolute inset-0 bg-inverse-surface/40 z-40 backdrop-blur-sm" id="backdrop" onclick="closeSheet()"></div>
+<!-- Bottom Sheet Container -->
+<div class="sheet-container absolute bottom-0 left-0 w-full z-50 flex flex-col items-center max-h-[751px]">
+<!-- Max-width wrapper for larger screens, though typically mobile width -->
+<div class="w-full max-w-md bg-surface-container-lowest rounded-t-xl soft-shadow flex flex-col pb-safe">
+<!-- Drag Handle (Visual Only) -->
+<div class="w-full flex justify-center pt-3 pb-1">
+<div class="w-12 h-1.5 bg-outline-variant rounded-full"></div>
+</div>
+<!-- Header -->
+<div class="flex items-center justify-between px-page-margin py-4 relative">
+<div class="w-16">
+<button class="text-on-surface-variant hover:text-on-surface transition-colors" onclick="closeSheet()">
+<span class="material-symbols-outlined" data-icon="close" style="font-variation-settings: 'FILL' 0;">close</span>
+</button>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface absolute left-1/2 -translate-x-1/2">
+                    选择日期
+                </h2>
+<div class="w-16 flex justify-end">
+<button class="bg-primary-container text-on-primary-container px-4 py-1.5 rounded-full font-label-md text-label-md active:bg-primary-fixed-dim transition-colors" onclick="confirmDate()">
+                        确定
+                    </button>
+</div>
+</div>
+<!-- Calendar Content -->
+<div class="px-page-margin pb-section-gap flex-1 overflow-y-auto">
+<!-- Month Selector -->
+<div class="flex items-center justify-between py-4 mb-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-full active:bg-surface-container transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="chevron_left" style="font-variation-settings: 'FILL' 0;">chevron_left</span>
+</button>
+<div class="font-headline-md text-headline-md text-on-surface">
+                        2023年 10月
+                    </div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full active:bg-surface-container transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="chevron_right" style="font-variation-settings: 'FILL' 0;">chevron_right</span>
+</button>
+</div>
+<!-- Days Header -->
+<div class="grid grid-cols-7 gap-1 mb-2">
+<div class="text-center font-label-sm text-label-sm text-on-surface-variant py-2">日</div>
+<div class="text-center font-label-sm text-label-sm text-on-surface-variant py-2">一</div>
+<div class="text-center font-label-sm text-label-sm text-on-surface-variant py-2">二</div>
+<div class="text-center font-label-sm text-label-sm text-on-surface-variant py-2">三</div>
+<div class="text-center font-label-sm text-label-sm text-on-surface-variant py-2">四</div>
+<div class="text-center font-label-sm text-label-sm text-on-surface-variant py-2">五</div>
+<div class="text-center font-label-sm text-label-sm text-on-surface-variant py-2">六</div>
+</div>
+<!-- Calendar Grid (October 2023 example) -->
+<div class="grid grid-cols-7 gap-y-2 gap-x-1">
+<!-- Empty slots for previous month -->
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<!-- Days -->
+<button class="w-full aspect-square flex flex-col items-center justify-center rounded-full hover:bg-surface-container active:bg-surface-container-high transition-colors text-on-surface font-body-md text-body-md">
+                        1
+                    </button>
+<button class="w-full aspect-square flex flex-col items-center justify-center rounded-full hover:bg-surface-container active:bg-surface-container-high transition-colors text-on-surface font-body-md text-body-md">
+                        2
+                    </button>
+<button class="w-full aspect-square flex flex-col items-center justify-center rounded-full hover:bg-surface-container active:bg-surface-container-high transition-colors text-on-surface font-body-md text-body-md">
+                        3
+                    </button>
+<button class="w-full aspect-square flex flex-col items-center justify-center rounded-full hover:bg-surface-container active:bg-surface-container-high transition-colors text-on-surface font-body-md text-body-md">
+                        4
+                    </button>
+<button class="w-full aspect-square flex flex-col items-center justify-center rounded-full hover:bg-surface-container active:bg-surface-container-high transition-colors text-on-surface font-body-md text-body-md relative">
+                        5
+                        <span class="absolute bottom-1 w-1 h-1 bg-primary rounded-full"></span>
+</button>
+<button class="w-full aspect-square flex flex-col items-center justify-center rounded-full hover:bg-surface-container active:bg-surface-container-high transition-colors text-on-surface font-body-md text-body-md">
+                        6
+                    </button>
+<button class="w-full aspect-square flex flex-col items-center justify-center rounded-full hover:bg-surface-container active:bg-surface-container-high transition-colors text-on-surface font-body-md text-body-md">
+                        7
+                    </button>
+<button class="w-full aspect-square flex flex-col items-center justify-center rounded-full hover:bg-surface-container active:bg-surface-container-high transition-colors text-on-surface font-body-md text-body-md">
+                        8
+                    </button>
+<button class="w-full aspect-square flex flex-col items-center justify-center rounded-full hover:bg-surface-container active:bg-surface-container-high transition-colors text-on-surface font-body-md text-body-md">
+                        9
+                    </button>
+<button class="w-full aspect-square flex flex-col items-center justify-center rounded-full hover:bg-surface-container active:bg-surface-container-high transition-colors text-on-surface font-body-md text-body-md">
+                        10
+                    </button>
+<button class="w-full aspect-square flex flex-col items-center justify-center rounded-full hover:bg-surface-container active:bg-surface-container-high transition-colors text-on-surface font-body-md text-body-md">
+                        11
+                    </button>
+<button class="w-full aspect-square flex flex-col items-center justify-center rounded-full hover:bg-surface-container active:bg-surface-container-high transition-colors text-on-surface font-body-md text-body-md">
+                        12
+                    </button>
+<!-- Selected Day -->
+<button class="w-full aspect-square flex flex-col items-center justify-center rounded-full bg-primary text-on-primary font-body-md text-body-md shadow-sm transform scale-105 transition-transform">
+                        13
+                    </button>
+<button class="w-full aspect-square flex flex-col items-center justify-center rounded-full hover:bg-surface-container active:bg-surface-container-high transition-colors text-on-surface font-body-md text-body-md">
+                        14
+                    </button>
+<button class="w-full aspect-square flex flex-col items-center justify-center rounded-full hover:bg-surface-container active:bg-surface-container-high transition-colors text-on-surface font-body-md text-body-md">
+                        15
+                    </button>
+<button class="w-full aspect-square flex flex-col items-center justify-center rounded-full hover:bg-surface-container active:bg-surface-container-high transition-colors text-on-surface font-body-md text-body-md relative">
+                        16
+                        <span class="absolute bottom-1 w-1 h-1 bg-primary rounded-full opacity-50"></span>
+</button>
+<button class="w-full aspect-square flex flex-col items-center justify-center rounded-full hover:bg-surface-container active:bg-surface-container-high transition-colors text-on-surface font-body-md text-body-md">
+                        17
+                    </button>
+<button class="w-full aspect-square flex flex-col items-center justify-center rounded-full hover:bg-surface-container active:bg-surface-container-high transition-colors text-on-surface font-body-md text-body-md">
+                        18
+                    </button>
+<button class="w-full aspect-square flex flex-col items-center justify-center rounded-full hover:bg-surface-container active:bg-surface-container-high transition-colors text-on-surface font-body-md text-body-md">
+                        19
+                    </button>
+<button class="w-full aspect-square flex flex-col items-center justify-center rounded-full hover:bg-surface-container active:bg-surface-container-high transition-colors text-on-surface font-body-md text-body-md">
+                        20
+                    </button>
+<button class="w-full aspect-square flex flex-col items-center justify-center rounded-full hover:bg-surface-container active:bg-surface-container-high transition-colors text-on-surface font-body-md text-body-md">
+                        21
+                    </button>
+<button class="w-full aspect-square flex flex-col items-center justify-center rounded-full hover:bg-surface-container active:bg-surface-container-high transition-colors text-on-surface font-body-md text-body-md">
+                        22
+                    </button>
+<button class="w-full aspect-square flex flex-col items-center justify-center rounded-full hover:bg-surface-container active:bg-surface-container-high transition-colors text-on-surface font-body-md text-body-md">
+                        23
+                    </button>
+<button class="w-full aspect-square flex flex-col items-center justify-center rounded-full hover:bg-surface-container active:bg-surface-container-high transition-colors text-on-surface font-body-md text-body-md">
+                        24
+                    </button>
+<button class="w-full aspect-square flex flex-col items-center justify-center rounded-full hover:bg-surface-container active:bg-surface-container-high transition-colors text-on-surface font-body-md text-body-md">
+                        25
+                    </button>
+<button class="w-full aspect-square flex flex-col items-center justify-center rounded-full hover:bg-surface-container active:bg-surface-container-high transition-colors text-on-surface font-body-md text-body-md">
+                        26
+                    </button>
+<button class="w-full aspect-square flex flex-col items-center justify-center rounded-full hover:bg-surface-container active:bg-surface-container-high transition-colors text-on-surface font-body-md text-body-md">
+                        27
+                    </button>
+<button class="w-full aspect-square flex flex-col items-center justify-center rounded-full hover:bg-surface-container active:bg-surface-container-high transition-colors text-on-surface font-body-md text-body-md">
+                        28
+                    </button>
+<button class="w-full aspect-square flex flex-col items-center justify-center rounded-full hover:bg-surface-container active:bg-surface-container-high transition-colors text-on-surface font-body-md text-body-md">
+                        29
+                    </button>
+<button class="w-full aspect-square flex flex-col items-center justify-center rounded-full hover:bg-surface-container active:bg-surface-container-high transition-colors text-on-surface font-body-md text-body-md">
+                        30
+                    </button>
+<button class="w-full aspect-square flex flex-col items-center justify-center rounded-full hover:bg-surface-container active:bg-surface-container-high transition-colors text-on-surface font-body-md text-body-md">
+                        31
+                    </button>
+<!-- Empty slots for next month -->
+<div class="w-full aspect-square flex items-center justify-center text-on-surface-variant/30 font-body-md text-body-md">1</div>
+<div class="w-full aspect-square flex items-center justify-center text-on-surface-variant/30 font-body-md text-body-md">2</div>
+<div class="w-full aspect-square flex items-center justify-center text-on-surface-variant/30 font-body-md text-body-md">3</div>
+<div class="w-full aspect-square flex items-center justify-center text-on-surface-variant/30 font-body-md text-body-md">4</div>
+</div>
+<!-- Quick Selection Chips below calendar -->
+
+</div>
+<!-- Bottom safe area padding for modern phones -->
+<div class="h-safe"></div>
+</div>
+</div>
+<script>
+        // Simple interactions for demonstration
+        function closeSheet() {
+            const sheet = document.querySelector('.sheet-container');
+            const backdrop = document.querySelector('.backdrop');
+            
+            sheet.style.animation = 'slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) reverse forwards';
+            backdrop.style.animation = 'fadeIn 0.2s ease-out reverse forwards';
+            
+            setTimeout(() => {
+                // In a real app, this would remove the DOM elements or hide them
+                console.log("Sheet closed");
+            }, 300);
+        }
+
+        function confirmDate() {
+            // Add a little visual feedback before closing
+            const btn = document.querySelector('.bg-primary-container');
+            btn.classList.add('scale-95');
+            setTimeout(() => {
+                btn.classList.remove('scale-95');
+                closeSheet();
+            }, 150);
+        }
+    </script>
+
+
+</body></html>

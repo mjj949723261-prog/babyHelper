@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import HomeTopNav from './HomeTopNav.vue'
 import type { NavMetrics } from '../../types/home'
 
 const props = defineProps<{
@@ -19,25 +20,12 @@ const heroStyle = computed(() => ({
   paddingTop: `${props.navMetrics.statusBarHeight}px`,
   minHeight: `${props.navMetrics.heroHeight}px`
 }))
-
-const capsuleStyle = computed(() => ({
-  width: `${props.navMetrics.capsuleWidth}px`,
-  height: `${props.navMetrics.capsuleHeight}px`
-}))
 </script>
 
 <template>
   <view class="hero-shell">
     <view class="hero" :style="heroStyle">
-      <view class="nav">
-        <view class="nav-left">
-          <view class="avatar-wrap">
-            <image class="avatar-img" :src="avatarUrl" mode="aspectFill" />
-          </view>
-          <view class="nav-title">{{ dayTitle }}</view>
-        </view>
-        <view class="nav-capsule-space" :style="capsuleStyle" />
-      </view>
+      <HomeTopNav :day-title="dayTitle" :avatar-url="avatarUrl" :nav-metrics="navMetrics" />
       <view class="status-card">
         <view class="status-chip">
           <view class="status-dot" :class="{ active: statusDotActive }"></view>
@@ -60,54 +48,6 @@ const capsuleStyle = computed(() => ({
   position: relative;
   padding: 0 24px 12px;
   background: #fef8f8;
-}
-
-.nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 40;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 52px;
-  padding: calc(v-bind('navMetrics.statusBarHeight') * 1px + 12px) 24px 12px;
-  background: linear-gradient(180deg, rgba(254, 248, 248, 0.94) 0%, rgba(254, 248, 248, 0.82) 72%, rgba(254, 248, 248, 0) 100%);
-  backdrop-filter: blur(12px);
-}
-
-.nav-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.avatar-wrap {
-  width: 40px;
-  height: 40px;
-  border-radius: 9999px;
-  overflow: hidden;
-  background: #f5e6e8;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.avatar-img {
-  width: 100%;
-  height: 100%;
-}
-
-.nav-title {
-  color: #665c5e;
-  font-size: 18px;
-  line-height: 24px;
-  font-weight: 600;
-}
-
-.nav-capsule-space {
-  flex-shrink: 0;
 }
 
 .capsule-shell {

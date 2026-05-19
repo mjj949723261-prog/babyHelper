@@ -29,3 +29,15 @@ export interface TodoMeta {
   moreLabel: string
   helper: string
 }
+
+export interface TodoCalendarDay {
+  label: string
+  date: string
+  active?: boolean
+}
+
+export interface TodoCalendarFilter {
+  key: string
+  label: string
+  active?: boolean
+}

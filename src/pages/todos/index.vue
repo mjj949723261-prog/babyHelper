@@ -1,209 +1,483 @@
 <script setup lang="ts">
-import IntroCard from '../../components/common/IntroCard.vue'
-import { homeContent, todoDetailContent } from '../../constants/mock-data'
+import { computed, ref } from 'vue'
+import { todoCalendarContent } from '../../constants/mock-data'
+import { navigateBack, navigateTo, showToast } from '../../utils/runtime-nav'
+
+const selectedDay = ref(todoCalendarContent.days.find((day) => day.active)?.date || todoCalendarContent.days[0]?.date || '')
+const selectedFilter = ref(todoCalendarContent.filters.find((filter) => filter.active)?.key || 'all')
+
+const filteredItems = computed(() => {
+  if (selectedFilter.value === 'all') {
+    return todoCalendarContent.items
+  }
+
+  return todoCalendarContent.items.filter((todo) => todo.category === selectedFilter.value)
+})
 
 function goBack() {
-  uni.navigateBack()
+  navigateBack('/pages/home/index')
+}
+
+function openTodoDetail(id: string) {
+  navigateTo(`/pages/todos/detail/index?id=${id}`, '打开任务详情失败')
+}
+
+function handleMore() {
+  showToast('后续接编辑菜单')
+}
+
+function handleAdd() {
+  navigateTo('/pages/todos/create/index', '打开新增待办失败')
+}
+
+function handleCalendarAction() {
+  showToast('后续接月历面板')
+}
+
+function selectDay(date: string) {
+  selectedDay.value = date
+}
+
+function selectFilter(key: string) {
+  selectedFilter.value = key
 }
 </script>
 
 <template>
-  <view class="todos-page">
-    <view class="todos-shell">
+  <view class="schedule-page">
+    <view class="schedule-shell">
       <view class="topbar">
-        <button class="back-button" @tap="goBack">
-          <text class="material-symbols-outlined">arrow_back</text>
+        <button class="back-button" @tap="goBack" @click="goBack">
+          <text class="material-symbols-outlined topbar-icon">arrow_back_ios_new</text>
         </button>
-        <view class="topbar-title">待办详情</view>
-        <view class="topbar-space"></view>
+        <view class="topbar-title">计划日程</view>
+        <view class="capsule-space"></view>
       </view>
 
-      <IntroCard
-        :eyebrow="todoDetailContent.intro.eyebrow"
-        :title="todoDetailContent.intro.title"
-        :desc="todoDetailContent.intro.desc"
-      />
-
-      <view class="todo-detail-card soft-card">
-        <view class="todo-detail-head">
-          <view class="todo-detail-helper">{{ todoDetailContent.helper }}</view>
-          <button class="todo-add">{{ todoDetailContent.ctaLabel }}</button>
+      <view class="calendar-section">
+        <view class="calendar-head">
+          <view class="month-switch">
+            <text class="month-label">{{ todoCalendarContent.monthLabel }}</text>
+            <text class="material-symbols-outlined month-icon">expand_more</text>
+          </view>
+          <button class="calendar-button" @tap="handleCalendarAction" @click="handleCalendarAction">
+            <text class="material-symbols-outlined button-icon">calendar_month</text>
+          </button>
         </view>
 
-        <view class="todo-detail-list">
-          <view v-for="todo in homeContent.todos" :key="todo.id" class="todo-detail-row" :class="{ done: todo.checked }">
-            <view class="detail-check" :class="{ checked: todo.checked }"></view>
-            <view class="detail-copy">
-              <view class="detail-title">{{ todo.title }}</view>
-              <view v-if="todo.note" class="detail-note">{{ todo.note }}</view>
-            </view>
-            <view v-if="todo.tag" class="detail-tag">{{ todo.tag }}</view>
+        <view class="calendar-card">
+          <view
+            v-for="day in todoCalendarContent.days"
+            :key="`${day.label}-${day.date}`"
+            class="day-cell"
+            @tap="selectDay(day.date)"
+            @click="selectDay(day.date)"
+          >
+            <text class="day-label" :class="{ active: selectedDay === day.date }">{{ day.label }}</text>
+            <view class="day-number" :class="{ active: selectedDay === day.date }">{{ day.date }}</view>
           </view>
         </view>
       </view>
+
+      <view class="filter-row">
+        <button
+          v-for="filter in todoCalendarContent.filters"
+          :key="filter.key"
+          class="filter-pill"
+          :class="{ active: selectedFilter === filter.key }"
+          @tap="selectFilter(filter.key)"
+          @click="selectFilter(filter.key)"
+        >
+          {{ filter.label }}
+        </button>
+      </view>
+
+      <view class="todo-stack">
+        <view
+          v-for="todo in filteredItems"
+          :key="todo.id"
+          class="schedule-card"
+          :class="{
+            special: todo.category === 'special' && !todo.checked,
+            done: todo.checked
+          }"
+          @tap="openTodoDetail(todo.id)"
+          @click="openTodoDetail(todo.id)"
+        >
+          <view v-if="todo.category === 'special' && !todo.checked" class="special-bar"></view>
+
+          <view class="schedule-check" :class="{ checked: todo.checked }">
+            <text v-if="todo.checked" class="material-symbols-outlined check-icon">check</text>
+          </view>
+
+          <view class="schedule-copy">
+            <view v-if="todo.categoryLabel && !todo.checked" class="card-top">
+              <view class="todo-type" :class="todo.category">
+                <text v-if="todo.category === 'special'" class="material-symbols-outlined type-icon">star</text>
+                <text>{{ todo.categoryLabel }}</text>
+              </view>
+            </view>
+
+            <view class="title-row">
+              <text class="todo-time">{{ todo.time }}</text>
+              <text class="todo-title">{{ todo.title }}</text>
+            </view>
+
+            <text class="todo-note">{{ todo.note }}</text>
+          </view>
+
+          <button class="more-button" @tap.stop="handleMore" @click.stop="handleMore">
+            <text class="material-symbols-outlined more-icon">more_horiz</text>
+          </button>
+        </view>
+      </view>
     </view>
+
+    <button class="fab-button" @tap="handleAdd" @click="handleAdd">
+      <text class="material-symbols-outlined fab-icon">add</text>
+    </button>
   </view>
 </template>
 
 <style lang="scss" scoped>
-.todos-page {
+.schedule-page {
   min-height: 100vh;
-  padding: 24px 24px 32px;
-  background: #fff7f6;
+  padding: calc(env(safe-area-inset-top) + 8px) 24px calc(100px + env(safe-area-inset-bottom));
+  background: #fef8f8;
+  color: #1d1b1b;
 }
 
-.todos-shell {
+.schedule-shell {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 28px;
 }
 
 .topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  margin: 0 -24px;
+  padding: 0 24px;
+  height: 56px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 8px;
+  background: rgba(254, 248, 248, 0.92);
+  backdrop-filter: blur(14px);
 }
 
-.back-button {
-  width: 36px;
-  height: 36px;
+.back-button,
+.calendar-button,
+.more-button,
+.fab-button {
   border: none;
-  border-radius: 9999px;
-  background: #f5e6e8;
-  color: #665c5e;
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
+}
+
+.back-button {
+  width: 48px;
+  height: 48px;
+  margin-left: -8px;
+  background: transparent;
+  color: #665c5e;
+}
+
+.topbar-icon {
+  font-size: 22px;
 }
 
 .topbar-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   color: #665c5e;
-  font-size: 16px;
-  line-height: 22px;
+  font-size: 20px;
+  line-height: 28px;
   font-weight: 600;
 }
 
-.topbar-space {
-  width: 36px;
-  height: 36px;
+.capsule-space {
+  width: 95px;
+  height: 32px;
 }
 
-.todo-detail-card {
-  padding: 22px 20px;
-  border-radius: 24px;
+.calendar-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.todo-detail-head {
+.calendar-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 16px;
+  padding: 0 2px;
 }
 
-.todo-detail-helper {
+.month-switch {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.month-label {
+  font-size: 17px;
+  line-height: 26px;
+  font-weight: 500;
+}
+
+.month-icon,
+.button-icon,
+.more-icon {
+  font-size: 18px;
+}
+
+.month-icon {
   color: #7f7576;
-  font-size: 13px;
-  line-height: 20px;
 }
 
-.todo-add {
+.calendar-button {
+  width: 32px;
   height: 32px;
-  padding: 0 14px;
-  border: none;
   border-radius: 9999px;
-  background: #f5e6e8;
+  background: #f2edec;
   color: #665c5e;
-  font-size: 12px;
-  line-height: 18px;
-  font-weight: 600;
-  flex-shrink: 0;
 }
 
-.todo-detail-list {
+.calendar-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 16px 14px;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.day-cell {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  align-items: center;
+  gap: 8px;
+  min-width: 36px;
 }
 
-.todo-detail-row {
+.day-label {
+  color: #d0c3c5;
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 600;
+}
+
+.day-label.active {
+  color: #665c5e;
+}
+
+.day-number {
+  width: 36px;
+  height: 36px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4d4546;
+  font-size: 15px;
+  line-height: 24px;
+}
+
+.day-number.active {
+  background: #f5e6e8;
+  color: #716668;
+  font-weight: 600;
+  box-shadow: 0 0 0 4px rgba(245, 230, 232, 0.3);
+}
+
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.filter-pill {
+  flex-shrink: 0;
+  height: 32px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 9999px;
+  background: #ece7e6;
+  color: #4d4546;
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 500;
+}
+
+.filter-pill.active {
+  background: #665c5e;
+  color: #fff;
+}
+
+.todo-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.schedule-card {
+  position: relative;
+  width: 100%;
+  border: none;
+  padding: 20px;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
   display: flex;
   align-items: flex-start;
-  gap: 12px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid rgba(208, 195, 197, 0.35);
+  gap: 16px;
+  text-align: left;
 }
 
-.todo-detail-row:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
+.schedule-card.special {
+  background: rgba(245, 230, 232, 0.2);
+  border: 1px solid rgba(245, 230, 232, 0.7);
 }
 
-.detail-check {
-  width: 20px;
-  height: 20px;
-  border-radius: 6px;
-  border: 1px solid #d0c3c5;
+.schedule-card.done {
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 0.72;
+}
+
+.special-bar {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 4px;
+  height: 48px;
+  border-radius: 0 9999px 9999px 0;
+  transform: translateY(-50%);
+  background: #665c5e;
+}
+
+.schedule-check {
+  width: 24px;
+  height: 24px;
+  margin-top: 2px;
+  border-radius: 9999px;
+  border: 2px solid #d0c3c5;
   background: #fff;
   flex-shrink: 0;
 }
 
-.detail-check.checked {
+.schedule-check.checked {
   background: #665c5e;
   border-color: #665c5e;
-  position: relative;
 }
 
-.detail-check.checked::after {
-  content: '';
-  position: absolute;
-  left: 5px;
-  top: 2px;
-  width: 6px;
-  height: 10px;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  transform: rotate(45deg);
+.check-icon {
+  color: #fff;
+  font-size: 16px;
 }
 
-.detail-copy {
+.schedule-copy {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.detail-title {
-  color: #1d1b1b;
-  font-size: 15px;
-  line-height: 22px;
-  font-weight: 500;
+.card-top {
+  margin-bottom: 2px;
 }
 
-.detail-note {
-  color: #9f8f95;
-  font-size: 12px;
-  line-height: 18px;
-}
-
-.detail-tag {
-  padding: 4px 8px;
+.todo-type {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 8px;
   border-radius: 9999px;
-  background: #f8f2f2;
-  color: #7f7576;
   font-size: 10px;
   line-height: 14px;
   font-weight: 600;
 }
 
-.todo-detail-row.done .detail-title,
-.todo-detail-row.done .detail-note {
-  opacity: 0.5;
+.todo-type.special {
+  background: #f5e6e8;
+  color: #665c5e;
 }
 
-.todo-detail-row.done .detail-title {
+.todo-type.daily {
+  background: #e6ebe5;
+  color: #656a65;
+}
+
+.type-icon {
+  font-size: 12px;
+  font-variation-settings: 'FILL' 1;
+}
+
+.title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.todo-time {
+  color: #1d1b1b;
+  font-size: 15px;
+  line-height: 24px;
+  font-weight: 600;
+}
+
+.todo-title {
+  color: #1d1b1b;
+  font-size: 17px;
+  line-height: 26px;
+}
+
+.todo-note {
+  color: #4d4546;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.schedule-card.done .todo-time,
+.schedule-card.done .todo-title {
+  color: #7f7576;
   text-decoration: line-through;
+}
+
+.schedule-card.done .todo-note {
+  color: #b1a8a9;
+}
+
+.more-button {
+  width: 32px;
+  height: 32px;
+  margin-right: -8px;
+  background: transparent;
+  color: #7f7576;
+  flex-shrink: 0;
+}
+
+.fab-button {
+  position: fixed;
+  right: 24px;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  width: 56px;
+  height: 56px;
+  border-radius: 9999px;
+  background: #f5e6e8;
+  color: #716668;
+  box-shadow: 0 8px 24px rgba(102, 92, 94, 0.15);
+}
+
+.fab-icon {
+  font-size: 28px;
 }
 </style>

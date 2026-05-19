@@ -35,6 +35,24 @@
       "style": {
         "navigationStyle": "custom"
       }
+    },
+    {
+      "path": "pages/todos/detail/index",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/todos/create/index",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/todos/calendar/index",
+      "style": {
+        "navigationStyle": "custom"
+      }
     }
   ],
   "tabBar": {

@@ -1,48 +1,12 @@
 import { reactive } from 'vue'
-import type { ActivityItem, NavMetrics, QuickAction, TodoItem } from '../types/home'
+import type { ActivityItem, QuickAction, TodoItem } from '../types/home'
 import { bottomTabs } from '../constants/navigation'
-import { homeContent } from '../constants/mock-data'
+import { homeContent, todoCalendarContent } from '../constants/mock-data'
 import topAvatarPlaceholder from '../assets/defaults/home-avatar.svg'
-
-const fallbackNavMetrics: NavMetrics = {
-  statusBarHeight: 44,
-  navBarHeight: 96,
-  capsuleWidth: 176,
-  capsuleHeight: 32,
-  windowWidth: 375,
-  heroHeight: 353
-}
-
-function getNavMetrics(): NavMetrics {
-  try {
-    const systemInfo = uni.getSystemInfoSync()
-    const menuButton = uni.getMenuButtonBoundingClientRect?.()
-
-    if (!menuButton || !menuButton.width) {
-      return fallbackNavMetrics
-    }
-
-    const statusBarHeight = systemInfo.statusBarHeight || fallbackNavMetrics.statusBarHeight
-    const navBarHeight = (menuButton.top - statusBarHeight) * 2 + menuButton.height
-    const windowWidth = systemInfo.windowWidth || fallbackNavMetrics.windowWidth
-    const statusCardHeight = (windowWidth - 48) * 0.75
-    const heroHeight = Math.round(statusBarHeight + navBarHeight + 16 + statusCardHeight)
-
-    return {
-      statusBarHeight,
-      navBarHeight,
-      capsuleWidth: menuButton.width,
-      capsuleHeight: menuButton.height,
-      windowWidth,
-      heroHeight
-    }
-  } catch (error) {
-    return fallbackNavMetrics
-  }
-}
+import { useNavMetrics } from './useNavMetrics'
 
 export function useHomePage() {
-  const navMetrics = reactive(getNavMetrics())
+  const navMetrics = useNavMetrics()
 
   const header = reactive({
     dayTitle: homeContent.header.dayTitle,
@@ -61,7 +25,7 @@ export function useHomePage() {
 
   const quickActions: QuickAction[] = homeContent.quickActions
 
-  const todos: TodoItem[] = homeContent.todos
+  const todos: TodoItem[] = todoCalendarContent.items
 
   const activities: ActivityItem[] = homeContent.activities
 

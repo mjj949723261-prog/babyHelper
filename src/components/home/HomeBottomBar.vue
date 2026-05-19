@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { BottomTabItem } from '../../constants/navigation'
+import { reLaunch } from '../../utils/runtime-nav'
 
 const props = defineProps<{
   tabs: BottomTabItem[]
@@ -8,7 +9,7 @@ const props = defineProps<{
 
 function handleTabClick(path: string) {
   if (path === props.currentPath) return
-  uni.reLaunch({ url: path })
+  reLaunch(path)
 }
 
 </script>
@@ -21,6 +22,7 @@ function handleTabClick(path: string) {
       class="tab-item"
       :class="{ active: tab.path === currentPath }"
       @tap="handleTabClick(tab.path)"
+      @click="handleTabClick(tab.path)"
     >
       <view class="tab-pill" :class="{ active: tab.path === currentPath }">
         <text class="material-symbols-outlined tab-icon" :class="{ active: tab.path === currentPath }">{{ tab.icon }}</text>

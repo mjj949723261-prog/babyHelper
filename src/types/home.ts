@@ -10,6 +10,15 @@ export interface TodoItem {
   checked: boolean
   note?: string
   tag?: string
+  time?: string
+  timeRange?: string
+  scheduleLabel?: string
+  category?: 'special' | 'daily'
+  categoryLabel?: string
+  icon?: string
+  reasonTitle?: string
+  reasonText?: string
+  accent?: 'primary' | 'tertiary'
 }
 
 export interface TimelineItem {

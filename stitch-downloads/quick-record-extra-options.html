@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN" style=""><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#e6ebe5",
+                        "on-surface-variant": "#4d4546",
+                        "surface-tint": "#665c5e",
+                        "on-error": "#ffffff",
+                        "primary-fixed": "#eedfe1",
+                        "surface-dim": "#ded9d8",
+                        "on-primary": "#ffffff",
+                        "surface-container-high": "#ece7e6",
+                        "outline-variant": "#d0c3c5",
+                        "on-tertiary-fixed-variant": "#434844",
+                        "tertiary-fixed": "#dfe4de",
+                        "inverse-primary": "#d1c3c5",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed": "#1f1b15",
+                        "surface-container": "#f2edec",
+                        "on-error-container": "#93000a",
+                        "surface-container-highest": "#e6e1e1",
+                        "outline": "#7f7576",
+                        "inverse-surface": "#323030",
+                        "secondary": "#645d56",
+                        "secondary-fixed": "#ebe1d7",
+                        "secondary-container": "#ebe1d7",
+                        "background": "#fef8f8",
+                        "surface-bright": "#fef8f8",
+                        "secondary-fixed-dim": "#cec5bc",
+                        "surface-variant": "#e6e1e1",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#4e4446",
+                        "primary-container": "#f5e6e8",
+                        "tertiary-fixed-dim": "#c3c8c2",
+                        "primary": "#665c5e",
+                        "on-background": "#1d1b1b",
+                        "inverse-on-surface": "#f5efef",
+                        "on-surface": "#1d1b1b",
+                        "on-primary-fixed": "#211a1b",
+                        "on-tertiary-fixed": "#181d19",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-low": "#f8f2f2",
+                        "on-secondary-container": "#6a635c",
+                        "tertiary": "#5a605b",
+                        "primary-fixed-dim": "#d1c3c5",
+                        "on-tertiary-container": "#656a65",
+                        "error": "#ba1a1a",
+                        "on-primary-container": "#716668",
+                        "surface": "#fef8f8",
+                        "on-secondary-fixed-variant": "#4c463f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "page-margin": "24px",
+                        "section-gap": "32px",
+                        "card-padding": "20px",
+                        "tap-target-min": "48px",
+                        "element-gap": "12px"
+                    },
+                    "fontFamily": {
+                        "display": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "label-sm": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "display": ["30px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-md": ["13px", {"lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "body-md": ["15px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "label-sm": ["11px", {"lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "600"}],
+                        "body-lg": ["17px", {"lineHeight": "26px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        body {
+            background-color: #fef8f8;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+        .bento-item-large {
+            grid-column: span 2;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="font-body-md text-on-surface selection:bg-primary-container">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky z-[60] bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-md flex justify-between items-center py-4 pl-page-margin">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-primary-container flex items-center justify-center">
+<img class="w-full h-full object-cover" data-alt="A soft focus, close-up photograph of a newborn baby's peaceful sleeping face." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA48dCcPChxPzoEISuk-NRFhCP9noHOcFBn2PXFDa1od3cgrpiPdeW4q80tutx_H_ElBmeQPCoJKOb2JQ_BjuyXmLgq3VBOtv4kWwzOTavQnQ__wJWjqq17NR1p63P95Q4GYeI5knoYcF0SO9LUbYgmbelYiYBs_LSJdFu2MABWDHz0fevGTQGuoAPu47tTx-AK-6xJveVorcfTCRmYUWKTgGeY0HBE1WCwHbGD-By13Ef8BWNzsrN0LzqI8B001OAECn_Xnq0pbuk6"/>
+</div>
+<h1 class="font-display text-headline-md-mobile text-primary dark:text-primary-fixed">Day 45</h1>
+</div>
+<div class="flex items-center gap-2 px-2 py-1 bg-black/5 dark:bg-white/10 rounded-full border border-black/10 dark:border-white/10 h-[32px] w-[87px] mr-[7px] justify-around">
+<span class="material-symbols-outlined text-[18px] text-on-surface" style="font-variation-settings: 'FILL' 1;">more_horiz</span>
+<div class="h-4 w-px bg-black/10 dark:bg-white/10"></div>
+<span class="material-symbols-outlined text-[18px] text-on-surface">radio_button_checked</span>
+</div>
+</header>
+<main class="px-page-margin pb-32 pt-4">
+<!-- Main Category Selector -->
+<section class="section-gap">
+<h2 class="font-label-md text-label-md text-on-surface-variant mb-4 uppercase tracking-wider">选择记录类型</h2>
+<div class="bento-grid">
+<!-- Feeding (Active State) -->
+<button class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container p-6 rounded-lg active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined text-4xl mb-2" data-icon="content_paste" style='font-variation-settings: "FILL" 1;'>content_paste</span>
+<span class="font-label-md">喂奶</span>
+</button>
+<!-- Sleep -->
+<button class="flex flex-col items-center justify-center bg-surface-container-low text-on-surface p-6 rounded-lg active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined text-4xl mb-2" data-icon="bedtime">bedtime</span>
+<span class="font-label-md">睡眠</span>
+</button>
+<!-- Diaper -->
+<button class="flex flex-col items-center justify-center bg-surface-container-low text-on-surface p-6 rounded-lg active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined text-4xl mb-2" data-icon="baby_changing_station">baby_changing_station</span>
+<span class="font-label-md">尿布</span>
+</button>
+<!-- Temp -->
+<button class="flex flex-col items-center justify-center bg-surface-container-low text-on-surface p-6 rounded-lg active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined text-4xl mb-2" data-icon="thermostat">thermostat</span>
+<span class="font-label-md">体温</span>
+</button>
+<!-- Medication -->
+<button class="bento-item-large flex flex-row items-center justify-center gap-4 bg-surface-container-low text-on-surface p-6 rounded-lg active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined text-3xl" data-icon="medication">medication</span>
+<span class="font-label-md">用药记录</span>
+</button><button class="bento-item-large flex flex-row items-center justify-center gap-4 bg-surface-container-low text-on-surface p-6 rounded-lg active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined text-3xl" data-icon="more_horiz">more_horiz</span>
+<span class="font-label-md">其他</span>
+</button>
+</div>
+</section>
+<!-- Dynamic Inputs for Feeding (Contextual) -->
+<section class="mt-section-gap">
+</section>
+<!-- Save Button Area (Bottom Fixed) -->
+<div class="fixed bottom-[100px] left-0 w-full px-page-margin">
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full bg-surface/80 backdrop-blur-xl border-t border-outline-variant/20 pt-3 pb-[calc(16px+env(safe-area-inset-bottom))] px-6 flex items-center justify-between z-50">
+<a class="flex flex-col items-center gap-1 text-on-surface-variant/70" href="#">
+<span class="material-symbols-outlined text-[26px]" data-icon="home">home</span>
+<span class="text-[11px] font-medium">首页</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined text-[26px]" data-icon="edit_note" style='font-variation-settings: "FILL" 1;'>edit_note</span>
+<span class="text-[11px] font-semibold">快速记录</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-on-surface-variant/70" href="#">
+<span class="material-symbols-outlined text-[26px]" data-icon="timeline">timeline</span>
+<span class="text-[11px] font-medium">成长线</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-on-surface-variant/70" href="#">
+<span class="material-symbols-outlined text-[26px]" data-icon="favorite">favorite</span>
+<span class="text-[11px] font-medium">陪伴</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-on-surface-variant/70" href="#">
+<span class="material-symbols-outlined text-[26px]" data-icon="person">person</span>
+<span class="text-[11px] font-medium">我的</span>
+</a>
+</nav>
+<!-- Visual Polish: Decorative Element -->
+<div class="fixed top-[20%] right-[-10%] w-64 h-64 rounded-full bg-primary-container/20 -z-10 blur-3xl"></div>
+<div class="fixed bottom-[15%] left-[-10%] w-48 h-48 rounded-full bg-tertiary-container/30 -z-10 blur-3xl"></div>
+</body></html>

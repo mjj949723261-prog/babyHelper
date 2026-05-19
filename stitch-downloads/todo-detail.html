@@ -1,0 +1,224 @@
+<!DOCTYPE html><html class="light" lang="zh-CN"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport">
+<title>任务详情 - Serene Parenting</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "background": "#fef8f8",
+                        "surface-container": "#f2edec",
+                        "error-container": "#ffdad6",
+                        "primary-fixed": "#eedfe1",
+                        "on-secondary-container": "#6a635c",
+                        "secondary-fixed-dim": "#cec5bc",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#181d19",
+                        "primary-fixed-dim": "#d1c3c5",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "surface": "#fef8f8",
+                        "on-secondary": "#ffffff",
+                        "on-background": "#1d1b1b",
+                        "on-tertiary-fixed-variant": "#434844",
+                        "on-surface-variant": "#4d4546",
+                        "surface-dim": "#ded9d8",
+                        "secondary-fixed": "#ebe1d7",
+                        "on-secondary-fixed-variant": "#4c463f",
+                        "secondary": "#645d56",
+                        "on-secondary-fixed": "#1f1b15",
+                        "surface-container-high": "#ece7e6",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed": "#dfe4de",
+                        "surface-variant": "#e6e1e1",
+                        "surface-container-low": "#f8f2f2",
+                        "secondary-container": "#ebe1d7",
+                        "on-surface": "#1d1b1b",
+                        "surface-bright": "#fef8f8",
+                        "tertiary": "#5a605b",
+                        "surface-tint": "#665c5e",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#f5efef",
+                        "outline-variant": "#d0c3c5",
+                        "inverse-surface": "#323030",
+                        "on-primary-fixed-variant": "#4e4446",
+                        "primary": "#665c5e",
+                        "on-primary-fixed": "#211a1b",
+                        "tertiary-container": "#e6ebe5",
+                        "surface-container-highest": "#e6e1e1",
+                        "primary-container": "#f5e6e8",
+                        "on-tertiary-container": "#656a65",
+                        "surface-container-lowest": "#ffffff",
+                        "outline": "#7f7576",
+                        "inverse-primary": "#d1c3c5",
+                        "on-primary-container": "#716668",
+                        "tertiary-fixed-dim": "#c3c8c2"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "element-gap": "12px",
+                        "card-padding": "20px",
+                        "page-margin": "24px",
+                        "tap-target-min": "48px",
+                        "section-gap": "32px",
+                        "safe-top": "env(safe-area-inset-top, 44px)",
+                        "safe-bottom": "env(safe-area-inset-bottom, 34px)"
+                    },
+                    fontFamily: {
+                        "label-sm": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    fontSize: {
+                        "label-sm": ["11px", { lineHeight: "16px", letterSpacing: "0.03em", fontWeight: "600" }],
+                        "headline-lg": ["24px", { lineHeight: "32px", fontWeight: "600" }],
+                        "body-md": ["15px", { lineHeight: "24px", fontWeight: "400" }],
+                        "headline-md": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+                        "body-lg": ["17px", { lineHeight: "26px", fontWeight: "400" }],
+                        "label-md": ["13px", { lineHeight: "18px", letterSpacing: "0.01em", fontWeight: "500" }],
+                        "display": ["30px", { lineHeight: "40px", letterSpacing: "-0.02em", fontWeight: "700" }]
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px rgba(0,0,0,0.04)',
+                        'float': '0 8px 30px rgba(0,0,0,0.06)'
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            -webkit-tap-highlight-color: transparent;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom scrollbar hiding for clean look */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        * {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md antialiased pt-[var(--safe-top)] pb-[var(--safe-bottom)] relative overflow-x-hidden">
+<!-- Top Navigation (Custom for WeChat Capsule) -->
+<header class="w-full top-0 sticky z-50 bg-surface/80 backdrop-blur-md flex justify-between items-center px-page-margin py-4 transition-all duration-300 pr-[95px]">
+<button aria-label="Go back" class="w-tap-target-min h-tap-target-min flex items-center justify-start text-on-surface-variant active:opacity-70 transition-opacity">
+<span class="material-symbols-outlined text-[24px]">arrow_back_ios_new</span>
+</button>
+<h1 class="font-headline-md text-headline-md text-primary absolute left-1/2 transform -translate-x-1/2">任务详情</h1>
+<div class="w-tap-target-min hidden md:block"></div> <!-- Spacer for centering on web -->
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 px-page-margin pt-4 pb-32 flex flex-col gap-section-gap z-10 relative">
+<!-- Hero Task Card -->
+<section class="bg-surface-container-low rounded-xl p-card-padding shadow-soft relative overflow-hidden flex flex-col gap-4">
+<!-- Decorative corner accent -->
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary-container/30 rounded-bl-full -mr-10 -mt-10 blur-xl pointer-events-none"></div>
+<div class="flex justify-between items-start relative z-10">
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-3">
+<span class="bg-[#FFF3E0] text-[#E65100] px-3 py-1 rounded-full font-label-md text-label-md">特殊</span>
+<span class="text-on-surface-variant font-label-md text-label-md">未完成</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mt-1">10:30 小憩</h2>
+</div>
+<div class="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container shrink-0">
+<span class="material-symbols-outlined icon-fill text-[24px]">bedtime</span>
+</div>
+</div>
+<p class="text-on-surface-variant font-body-md text-body-md">预计 45 分钟，保持室内昏暗。</p>
+</section>
+<!-- Details List -->
+<section class="flex flex-col gap-4">
+<!-- Time -->
+<div class="flex items-center gap-4 bg-surface-container-lowest rounded-xl p-4 shadow-soft">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[20px]">schedule</span>
+</div>
+<div class="flex-1 flex flex-col">
+<span class="text-on-surface-variant font-label-sm text-label-sm">任务时间</span>
+<span class="text-on-surface font-body-md text-body-md">今天 10:30 - 11:15</span>
+</div>
+</div>
+<!-- Recurrence -->
+<div class="flex items-center gap-4 bg-surface-container-lowest rounded-xl p-4 shadow-soft">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[20px]">update</span>
+</div>
+<div class="flex-1 flex flex-col">
+<span class="text-on-surface-variant font-label-sm text-label-sm">循环设置</span>
+<span class="text-on-surface font-body-md text-body-md">每天</span>
+</div>
+</div>
+<!-- Notes -->
+<div class="flex items-start gap-4 bg-surface-container-lowest rounded-xl p-4 shadow-soft">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary shrink-0 mt-1">
+<span class="material-symbols-outlined text-[20px]">edit_note</span>
+</div>
+<div class="flex-1 flex flex-col">
+<span class="text-on-surface-variant font-label-sm text-label-sm mb-1">备忘提醒</span>
+<p class="text-on-surface font-body-md text-body-md leading-relaxed">保持室内昏暗，播放白噪音。可以尝试轻抚后背安抚入睡。</p>
+</div>
+</div>
+</section>
+<!-- Growth Context Note (Healing Touch) -->
+<section class="bg-primary-container/40 border border-primary-fixed-dim/30 rounded-xl p-card-padding flex gap-4 items-start relative overflow-hidden">
+<span class="material-symbols-outlined icon-fill text-primary text-[28px] shrink-0 mt-1">favorite</span>
+<div class="flex flex-col gap-1 z-10">
+<h3 class="font-label-md text-label-md text-on-primary-container font-semibold">为什么这很重要？</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed text-[14px]">充足的高质量小憩有助于宝宝的大脑发育，稳定情绪，避免过度疲劳导致的夜哭。</p>
+</div>
+<!-- Subtle background decoration -->
+<span class="material-symbols-outlined text-primary/10 text-[120px] absolute -bottom-6 -right-6 pointer-events-none rotate-[-15deg]">auto_awesome</span>
+</section>
+</main>
+<!-- Bottom Action Bar -->
+<footer class="fixed bottom-0 left-0 w-full bg-surface/90 backdrop-blur-xl border-t border-surface-variant px-page-margin py-4 pb-[calc(1rem+var(--safe-bottom))] z-40 flex flex-col gap-3 shadow-[0_-10px_30px_rgba(0,0,0,0.02)]">
+<!-- Primary Action -->
+<button class="w-full h-[56px] bg-primary text-on-primary rounded-full font-headline-md text-headline-md shadow-float flex items-center justify-center gap-2 active:scale-[0.98] transition-transform duration-200">
+<span class="material-symbols-outlined">check_circle</span>
+            标记完成
+        </button>
+<!-- Secondary Actions -->
+<div class="flex justify-center items-center gap-8 mt-2">
+<button class="flex items-center gap-1 text-on-surface-variant font-label-md text-label-md h-tap-target-min active:opacity-70 transition-opacity">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+                修改任务
+            </button>
+<div class="w-[1px] h-4 bg-outline-variant/50"></div>
+<button class="flex items-center gap-1 text-error font-label-md text-label-md h-tap-target-min active:opacity-70 transition-opacity">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+                删除任务
+            </button>
+</div>
+</footer>
+
+
+</body></html>
