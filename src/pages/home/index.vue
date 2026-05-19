@@ -49,17 +49,6 @@ const contentStyle = computed(() => ({
     />
 
     <view class="content" :style="contentStyle">
-      <view class="focus-card">
-        <view class="focus-col">
-          <text class="focus-label">距离上次喂奶</text>
-          <text class="focus-value">{{ todayFocus.feedGap }}</text>
-        </view>
-        <view class="focus-divider"></view>
-        <view class="focus-col align-right">
-          <text class="focus-label">当前状态</text>
-          <text class="focus-value">{{ todayFocus.currentStatus }}</text>
-        </view>
-      </view>
       <HomeTimeline
         :title="sectionTitles.todo"
         :add-icon="addTodoIcon"

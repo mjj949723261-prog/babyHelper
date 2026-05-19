@@ -5,6 +5,8 @@ import { readTodoCreateDraft, writeTodoCreateDraft } from '../../../utils/todo-c
 
 const TIME_WHEEL_ITEM_HEIGHT = 56
 const TIME_WHEEL_SPACER_HEIGHT = 112
+const TIME_WHEEL_REPEAT_COUNT = 3
+const TIME_WHEEL_SELECTED_ROW_INDEX = 2
 
 const category = ref<'daily' | 'important'>('daily')
 const title = ref('')
@@ -24,6 +26,8 @@ const displayMonth = ref(10)
 const selectedDay = ref(13)
 const selectedHour = ref(10)
 const selectedMinute = ref(0)
+const activeHourLoopIndex = ref(10)
+const activeMinuteLoopIndex = ref(0)
 const hourScrollTop = ref(10 * TIME_WHEEL_ITEM_HEIGHT)
 const minuteScrollTop = ref(0)
 const timeWheelRenderKey = ref(0)
@@ -41,9 +45,29 @@ const monthTitle = computed(() => `${displayYear.value}年 ${displayMonth.value}
 const currentFieldLabel = computed(() => (pickerField.value === 'start' ? '开始日期' : '结束日期'))
 const currentFieldValue = computed(() => (pickerField.value === 'start' ? startDate.value : endDate.value))
 const currentTimeFieldLabel = computed(() => (timeField.value === 'start' ? '开始时间' : '结束时间'))
-const currentTimeFieldValue = computed(() => (timeField.value === 'start' ? startTime.value : endTime.value))
+const currentTimeFieldValue = computed(() => {
+  if (!isTimeModalOpen.value) {
+    return timeField.value === 'start' ? startTime.value : endTime.value
+  }
+
+  return `${String(getActiveWheelValue('hour')).padStart(2, '0')}:${String(getActiveWheelValue('minute')).padStart(2, '0')}`
+})
 const hourOptions = computed(() => Array.from({ length: 24 }, (_, index) => String(index).padStart(2, '0')))
 const minuteOptions = computed(() => Array.from({ length: 60 }, (_, index) => String(index).padStart(2, '0')))
+const loopHourOptions = computed(() =>
+  Array.from({ length: hourOptions.value.length * TIME_WHEEL_REPEAT_COUNT }, (_, index) => ({
+    value: hourOptions.value[index % hourOptions.value.length],
+    actualIndex: index % hourOptions.value.length,
+    loopIndex: index
+  }))
+)
+const loopMinuteOptions = computed(() =>
+  Array.from({ length: minuteOptions.value.length * TIME_WHEEL_REPEAT_COUNT }, (_, index) => ({
+    value: minuteOptions.value[index % minuteOptions.value.length],
+    actualIndex: index % minuteOptions.value.length,
+    loopIndex: index
+  }))
+)
 const isAnyModalOpen = computed(() => isDateModalOpen.value || isTimeModalOpen.value)
 
 const calendarCells = computed(() => {
@@ -169,6 +193,7 @@ function closeTimeModal() {
 
 let hourSnapTimer: ReturnType<typeof setTimeout> | null = null
 let minuteSnapTimer: ReturnType<typeof setTimeout> | null = null
+let isSnapping = false
 
 function resolveWheelElement(target: unknown): HTMLElement | null {
   if (typeof HTMLElement === 'undefined' || !target) return null
@@ -190,18 +215,53 @@ function applyWheelScrollTop(target: unknown, scrollTop: number) {
   element.scrollTop = scrollTop
 }
 
-function syncTimeWheelPosition(hour: number, minute: number) {
-  const nextHourTop = hour * TIME_WHEEL_ITEM_HEIGHT
-  const nextMinuteTop = minute * TIME_WHEEL_ITEM_HEIGHT
+function getWheelRef(type: 'hour' | 'minute') {
+  return type === 'hour' ? hourWheelRef.value : minuteWheelRef.value
+}
 
+function getWheelScrollTop(type: 'hour' | 'minute') {
+  const element = resolveWheelElement(getWheelRef(type))
+  return element?.scrollTop
+}
+
+function getWheelBaseLength(type: 'hour' | 'minute') {
+  return type === 'hour' ? hourOptions.value.length : minuteOptions.value.length
+}
+
+function normalizeWheelIndex(index: number, type: 'hour' | 'minute') {
+  const baseLength = getWheelBaseLength(type)
+  return ((index % baseLength) + baseLength) % baseLength
+}
+
+function getMiddleLoopIndex(index: number, type: 'hour' | 'minute') {
+  return normalizeWheelIndex(index, type) + getWheelBaseLength(type)
+}
+
+function getScrollTopFromLoopIndex(index: number) {
+  return (index - TIME_WHEEL_SELECTED_ROW_INDEX) * TIME_WHEEL_ITEM_HEIGHT
+}
+
+function getActiveWheelValue(type: 'hour' | 'minute') {
+  const loopIndex = type === 'hour' ? activeHourLoopIndex.value : activeMinuteLoopIndex.value
+  return normalizeWheelIndex(loopIndex, type)
+}
+
+function getLoopIndexFromScrollTop(scrollTop: number) {
+  return Math.round(scrollTop / TIME_WHEEL_ITEM_HEIGHT) + TIME_WHEEL_SELECTED_ROW_INDEX
+}
+
+function syncTimeWheelPosition(hour: number, minute: number) {
+  const nextHourLoopIndex = getMiddleLoopIndex(hour, 'hour')
+  const nextMinuteLoopIndex = getMiddleLoopIndex(minute, 'minute')
+  const nextHourTop = getScrollTopFromLoopIndex(nextHourLoopIndex)
+  const nextMinuteTop = getScrollTopFromLoopIndex(nextMinuteLoopIndex)
+
+  activeHourLoopIndex.value = nextHourLoopIndex
+  activeMinuteLoopIndex.value = nextMinuteLoopIndex
   hourScrollTop.value = nextHourTop
   minuteScrollTop.value = nextMinuteTop
   applyWheelScrollTop(hourWheelRef.value, nextHourTop)
   applyWheelScrollTop(minuteWheelRef.value, nextMinuteTop)
-}
-
-function clampIndex(value: number, max: number) {
-  return Math.max(0, Math.min(value, max))
 }
 
 function scheduleWheelSnap(type: 'hour' | 'minute') {
@@ -209,14 +269,32 @@ function scheduleWheelSnap(type: 'hour' | 'minute') {
   if (timer) clearTimeout(timer)
 
   const nextTimer = setTimeout(() => {
-    if (type === 'hour') {
-      syncTimeWheelPosition(selectedHour.value, selectedMinute.value)
-      hourSnapTimer = null
-      return
+    isSnapping = true
+    const scrollTop = getWheelScrollTop(type)
+    if (typeof scrollTop === 'number') {
+      const highlightedLoopIndex = getLoopIndexFromScrollTop(scrollTop)
+      const nextIndex = normalizeWheelIndex(highlightedLoopIndex, type)
+
+      if (type === 'hour') {
+        selectedHour.value = nextIndex
+        activeHourLoopIndex.value = highlightedLoopIndex
+      } else {
+        selectedMinute.value = nextIndex
+        activeMinuteLoopIndex.value = highlightedLoopIndex
+      }
     }
 
     syncTimeWheelPosition(selectedHour.value, selectedMinute.value)
-    minuteSnapTimer = null
+
+    setTimeout(() => {
+      isSnapping = false
+    }, 100)
+
+    if (type === 'hour') {
+      hourSnapTimer = null
+    } else {
+      minuteSnapTimer = null
+    }
   }, 90)
 
   if (type === 'hour') {
@@ -227,14 +305,36 @@ function scheduleWheelSnap(type: 'hour' | 'minute') {
 }
 
 function handleWheelScroll(type: 'hour' | 'minute', event: { detail?: { scrollTop?: number } }) {
-  const scrollTop = event.detail?.scrollTop ?? 0
-  const maxIndex = type === 'hour' ? hourOptions.value.length - 1 : minuteOptions.value.length - 1
-  const nextIndex = clampIndex(Math.round(scrollTop / TIME_WHEEL_ITEM_HEIGHT), maxIndex)
+  if (isSnapping) return
+
+  const scrollTop = event.detail?.scrollTop ?? getWheelScrollTop(type)
+  if (typeof scrollTop !== 'number') return
+  const highlightedLoopIndex = getLoopIndexFromScrollTop(scrollTop)
+  const nextIndex = normalizeWheelIndex(highlightedLoopIndex, type)
+  const baseLength = getWheelBaseLength(type)
+  const rawIndex = Math.round(scrollTop / TIME_WHEEL_ITEM_HEIGHT)
 
   if (type === 'hour') {
     selectedHour.value = nextIndex
+    activeHourLoopIndex.value = highlightedLoopIndex
   } else {
     selectedMinute.value = nextIndex
+    activeMinuteLoopIndex.value = highlightedLoopIndex
+  }
+
+  if (rawIndex < baseLength * 0.5 || rawIndex > baseLength * 2.5) {
+    const alignedIndex = getMiddleLoopIndex(nextIndex, type)
+    const alignedTop = getScrollTopFromLoopIndex(alignedIndex)
+
+    if (type === 'hour') {
+      hourScrollTop.value = alignedTop
+      activeHourLoopIndex.value = alignedIndex
+      applyWheelScrollTop(hourWheelRef.value, alignedTop)
+    } else {
+      minuteScrollTop.value = alignedTop
+      activeMinuteLoopIndex.value = alignedIndex
+      applyWheelScrollTop(minuteWheelRef.value, alignedTop)
+    }
   }
 
   scheduleWheelSnap(type)
@@ -280,6 +380,9 @@ function confirmDateModal() {
 }
 
 function confirmTimeModal() {
+  selectedHour.value = getActiveWheelValue('hour')
+  selectedMinute.value = getActiveWheelValue('minute')
+
   const nextValue = `${String(selectedHour.value).padStart(2, '0')}:${String(selectedMinute.value).padStart(2, '0')}`
 
   if (timeField.value === 'start') {
@@ -475,7 +578,6 @@ function handleSave() {
             <view class="time-picker-shell">
               <view class="time-wheel-frame">
                 <view class="time-wheel-highlight"></view>
-                <text class="time-separator">:</text>
               </view>
               <view :key="timeWheelRenderKey" class="time-picker">
                 <scroll-view
@@ -491,14 +593,14 @@ function handleSave() {
                 >
                   <view class="time-wheel-spacer"></view>
                   <button
-                    v-for="(hour, index) in hourOptions"
-                    :key="`hour-${hour}`"
+                    v-for="hour in loopHourOptions"
+                    :key="`hour-${hour.loopIndex}`"
                     class="time-picker-item"
-                    :class="{ active: selectedHour === index }"
-                    @tap="selectWheelValue('hour', index)"
-                    @click="selectWheelValue('hour', index)"
+                    :class="{ active: activeHourLoopIndex === hour.loopIndex }"
+                    @tap="selectWheelValue('hour', hour.actualIndex)"
+                    @click="selectWheelValue('hour', hour.actualIndex)"
                   >
-                    {{ hour }}
+                    {{ hour.value }}
                   </button>
                   <view class="time-wheel-spacer"></view>
                 </scroll-view>
@@ -516,14 +618,14 @@ function handleSave() {
                 >
                   <view class="time-wheel-spacer"></view>
                   <button
-                    v-for="(minute, index) in minuteOptions"
-                    :key="`minute-${minute}`"
+                    v-for="minute in loopMinuteOptions"
+                    :key="`minute-${minute.loopIndex}`"
                     class="time-picker-item"
-                    :class="{ active: selectedMinute === index }"
-                    @tap="selectWheelValue('minute', index)"
-                    @click="selectWheelValue('minute', index)"
+                    :class="{ active: activeMinuteLoopIndex === minute.loopIndex }"
+                    @tap="selectWheelValue('minute', minute.actualIndex)"
+                    @click="selectWheelValue('minute', minute.actualIndex)"
                   >
-                    {{ minute }}
+                    {{ minute.value }}
                   </button>
                   <view class="time-wheel-spacer"></view>
                 </scroll-view>
@@ -1064,6 +1166,12 @@ function handleSave() {
   height: 280px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.time-wheel-column::-webkit-scrollbar {
+  display: none;
 }
 
 .time-wheel-spacer {
@@ -1091,9 +1199,8 @@ function handleSave() {
   position: absolute;
   left: 12px;
   right: 12px;
-  top: 50%;
+  top: calc(12px + 112px);
   height: 56px;
-  transform: translateY(-50%);
   border-radius: 18px;
   background: rgba(102, 92, 94, 0.1);
   box-shadow: inset 0 0 0 1px rgba(102, 92, 94, 0.08);
@@ -1111,18 +1218,23 @@ function handleSave() {
   font-size: 20px;
   line-height: 28px;
   font-weight: 500;
+  opacity: 0.42;
+  transform: scale(0.94);
+  transition: opacity 0.18s ease, transform 0.18s ease, color 0.18s ease;
 }
 
 .time-picker-item.active {
   color: #514149;
   font-weight: 600;
+  opacity: 1;
+  transform: scale(1);
 }
 
 .time-separator {
   position: absolute;
   left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  top: calc(12px + 140px);
+  transform: translateX(-50%);
   color: #665c5e;
   font-size: 28px;
   line-height: 36px;
