@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { navigateBack, showToast } from '../../../utils/runtime-nav'
 import { readTodoCreateDraft, writeTodoCreateDraft } from '../../../utils/todo-create-draft'
+
+const TIME_WHEEL_ITEM_HEIGHT = 56
+const TIME_WHEEL_SPACER_HEIGHT = 112
 
 const category = ref<'daily' | 'important'>('daily')
 const title = ref('')
@@ -21,6 +24,11 @@ const displayMonth = ref(10)
 const selectedDay = ref(13)
 const selectedHour = ref(10)
 const selectedMinute = ref(0)
+const hourScrollTop = ref(10 * TIME_WHEEL_ITEM_HEIGHT)
+const minuteScrollTop = ref(0)
+const timeWheelRenderKey = ref(0)
+const hourWheelRef = ref<unknown>(null)
+const minuteWheelRef = ref<unknown>(null)
 
 const categoryTabs = computed(() => [
   { key: 'daily', label: '日常' },
@@ -36,7 +44,6 @@ const currentTimeFieldLabel = computed(() => (timeField.value === 'start' ? '开
 const currentTimeFieldValue = computed(() => (timeField.value === 'start' ? startTime.value : endTime.value))
 const hourOptions = computed(() => Array.from({ length: 24 }, (_, index) => String(index).padStart(2, '0')))
 const minuteOptions = computed(() => Array.from({ length: 60 }, (_, index) => String(index).padStart(2, '0')))
-const timePickerValue = computed(() => [selectedHour.value, selectedMinute.value])
 const isAnyModalOpen = computed(() => isDateModalOpen.value || isTimeModalOpen.value)
 
 const calendarCells = computed(() => {
@@ -86,6 +93,8 @@ onBeforeUnmount(() => {
   if (typeof document === 'undefined') return
   document.body.style.overflow = ''
   document.body.style.touchAction = ''
+  if (hourSnapTimer) clearTimeout(hourSnapTimer)
+  if (minuteSnapTimer) clearTimeout(minuteSnapTimer)
 })
 
 function syncDraft() {
@@ -146,16 +155,99 @@ function openTimeModal(field: 'start' | 'end') {
   selectedHour.value = parsed.hour
   selectedMinute.value = parsed.minute
   isTimeModalOpen.value = true
+  timeWheelRenderKey.value += 1
+  nextTick(() => {
+    syncTimeWheelPosition(parsed.hour, parsed.minute)
+    setTimeout(() => syncTimeWheelPosition(parsed.hour, parsed.minute), 24)
+    setTimeout(() => syncTimeWheelPosition(parsed.hour, parsed.minute), 96)
+  })
 }
 
 function closeTimeModal() {
   isTimeModalOpen.value = false
 }
 
-function handleTimePickerChange(event: { detail?: { value?: number[] } }) {
-  const values = event.detail?.value || []
-  selectedHour.value = values[0] ?? selectedHour.value
-  selectedMinute.value = values[1] ?? selectedMinute.value
+let hourSnapTimer: ReturnType<typeof setTimeout> | null = null
+let minuteSnapTimer: ReturnType<typeof setTimeout> | null = null
+
+function resolveWheelElement(target: unknown): HTMLElement | null {
+  if (typeof HTMLElement === 'undefined' || !target) return null
+  if (target instanceof HTMLElement) return target
+
+  const maybeElement = (target as { $el?: unknown }).$el
+  if (maybeElement instanceof HTMLElement) {
+    return maybeElement.matches('.time-wheel-column')
+      ? maybeElement
+      : maybeElement.querySelector('.time-wheel-column')
+  }
+
+  return null
+}
+
+function applyWheelScrollTop(target: unknown, scrollTop: number) {
+  const element = resolveWheelElement(target)
+  if (!element) return
+  element.scrollTop = scrollTop
+}
+
+function syncTimeWheelPosition(hour: number, minute: number) {
+  const nextHourTop = hour * TIME_WHEEL_ITEM_HEIGHT
+  const nextMinuteTop = minute * TIME_WHEEL_ITEM_HEIGHT
+
+  hourScrollTop.value = nextHourTop
+  minuteScrollTop.value = nextMinuteTop
+  applyWheelScrollTop(hourWheelRef.value, nextHourTop)
+  applyWheelScrollTop(minuteWheelRef.value, nextMinuteTop)
+}
+
+function clampIndex(value: number, max: number) {
+  return Math.max(0, Math.min(value, max))
+}
+
+function scheduleWheelSnap(type: 'hour' | 'minute') {
+  const timer = type === 'hour' ? hourSnapTimer : minuteSnapTimer
+  if (timer) clearTimeout(timer)
+
+  const nextTimer = setTimeout(() => {
+    if (type === 'hour') {
+      syncTimeWheelPosition(selectedHour.value, selectedMinute.value)
+      hourSnapTimer = null
+      return
+    }
+
+    syncTimeWheelPosition(selectedHour.value, selectedMinute.value)
+    minuteSnapTimer = null
+  }, 90)
+
+  if (type === 'hour') {
+    hourSnapTimer = nextTimer
+  } else {
+    minuteSnapTimer = nextTimer
+  }
+}
+
+function handleWheelScroll(type: 'hour' | 'minute', event: { detail?: { scrollTop?: number } }) {
+  const scrollTop = event.detail?.scrollTop ?? 0
+  const maxIndex = type === 'hour' ? hourOptions.value.length - 1 : minuteOptions.value.length - 1
+  const nextIndex = clampIndex(Math.round(scrollTop / TIME_WHEEL_ITEM_HEIGHT), maxIndex)
+
+  if (type === 'hour') {
+    selectedHour.value = nextIndex
+  } else {
+    selectedMinute.value = nextIndex
+  }
+
+  scheduleWheelSnap(type)
+}
+
+function selectWheelValue(type: 'hour' | 'minute', index: number) {
+  if (type === 'hour') {
+    selectedHour.value = index
+  } else {
+    selectedMinute.value = index
+  }
+
+  syncTimeWheelPosition(selectedHour.value, selectedMinute.value)
 }
 
 function changeMonth(offset: number) {
@@ -300,11 +392,11 @@ function handleSave() {
       <button class="save-button" @tap="handleSave" @click="handleSave">好的，保存它</button>
     </view>
 
-    <view v-if="isDateModalOpen" class="modal-root" @touchmove.stop.prevent @wheel.stop.prevent>
+    <view v-if="isDateModalOpen" class="modal-root">
       <view class="modal-backdrop" @tap="closeDateModal" @click="closeDateModal" @touchmove.stop.prevent @wheel.stop.prevent></view>
 
       <view class="sheet-container">
-        <view class="sheet-panel" @touchmove.stop @wheel.stop>
+        <view class="sheet-panel">
           <view class="sheet-header">
             <view class="sheet-side">
               <button class="sheet-close" @tap="closeDateModal" @click="closeDateModal">
@@ -357,11 +449,11 @@ function handleSave() {
       </view>
     </view>
 
-    <view v-if="isTimeModalOpen" class="modal-root" @touchmove.stop.prevent @wheel.stop.prevent>
+    <view v-if="isTimeModalOpen" class="modal-root">
       <view class="modal-backdrop" @tap="closeTimeModal" @click="closeTimeModal" @touchmove.stop.prevent @wheel.stop.prevent></view>
 
       <view class="sheet-container">
-        <view class="sheet-panel" @touchmove.stop @wheel.stop>
+        <view class="sheet-panel">
           <view class="sheet-header">
             <view class="sheet-side">
               <button class="sheet-close" @tap="closeTimeModal" @click="closeTimeModal">
@@ -385,20 +477,57 @@ function handleSave() {
                 <view class="time-wheel-highlight"></view>
                 <text class="time-separator">:</text>
               </view>
-              <picker-view
-                class="time-picker"
-                indicator-class="time-picker-indicator"
-                mask-class="time-picker-mask"
-                :value="timePickerValue"
-                @change="handleTimePickerChange"
-              >
-                <picker-view-column>
-                  <view v-for="hour in hourOptions" :key="`hour-${hour}`" class="time-picker-item">{{ hour }}</view>
-                </picker-view-column>
-                <picker-view-column>
-                  <view v-for="minute in minuteOptions" :key="`minute-${minute}`" class="time-picker-item">{{ minute }}</view>
-                </picker-view-column>
-              </picker-view>
+              <view :key="timeWheelRenderKey" class="time-picker">
+                <scroll-view
+                  ref="hourWheelRef"
+                  class="time-wheel-column"
+                  scroll-y
+                  :scroll-top="hourScrollTop"
+                  :show-scrollbar="false"
+                  :scroll-with-animation="true"
+                  @scroll="handleWheelScroll('hour', $event)"
+                  @touchend="scheduleWheelSnap('hour')"
+                  @mouseup="scheduleWheelSnap('hour')"
+                >
+                  <view class="time-wheel-spacer"></view>
+                  <button
+                    v-for="(hour, index) in hourOptions"
+                    :key="`hour-${hour}`"
+                    class="time-picker-item"
+                    :class="{ active: selectedHour === index }"
+                    @tap="selectWheelValue('hour', index)"
+                    @click="selectWheelValue('hour', index)"
+                  >
+                    {{ hour }}
+                  </button>
+                  <view class="time-wheel-spacer"></view>
+                </scroll-view>
+
+                <scroll-view
+                  ref="minuteWheelRef"
+                  class="time-wheel-column"
+                  scroll-y
+                  :scroll-top="minuteScrollTop"
+                  :show-scrollbar="false"
+                  :scroll-with-animation="true"
+                  @scroll="handleWheelScroll('minute', $event)"
+                  @touchend="scheduleWheelSnap('minute')"
+                  @mouseup="scheduleWheelSnap('minute')"
+                >
+                  <view class="time-wheel-spacer"></view>
+                  <button
+                    v-for="(minute, index) in minuteOptions"
+                    :key="`minute-${minute}`"
+                    class="time-picker-item"
+                    :class="{ active: selectedMinute === index }"
+                    @tap="selectWheelValue('minute', index)"
+                    @click="selectWheelValue('minute', index)"
+                  >
+                    {{ minute }}
+                  </button>
+                  <view class="time-wheel-spacer"></view>
+                </scroll-view>
+              </view>
             </view>
           </view>
         </view>
@@ -923,8 +1052,22 @@ function handleSave() {
 }
 
 .time-picker {
+  display: flex;
+  align-items: stretch;
   height: 280px;
   width: 100%;
+}
+
+.time-wheel-column {
+  flex: 1;
+  min-width: 0;
+  height: 280px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.time-wheel-spacer {
+  height: 112px;
 }
 
 .time-picker-shell {
@@ -957,7 +1100,10 @@ function handleSave() {
 }
 
 .time-picker-item {
+  width: 100%;
   height: 56px;
+  border: none;
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -967,15 +1113,9 @@ function handleSave() {
   font-weight: 500;
 }
 
-.time-picker-indicator {
-  height: 56px;
-  border-top: 1px solid rgba(102, 92, 94, 0.16);
-  border-bottom: 1px solid rgba(102, 92, 94, 0.16);
-}
-
-.time-picker-mask {
-  background: linear-gradient(180deg, #f8f2f2 0%, rgba(248, 242, 242, 0.78) 22%, rgba(248, 242, 242, 0.12) 44%),
-    linear-gradient(0deg, #f8f2f2 0%, rgba(248, 242, 242, 0.78) 22%, rgba(248, 242, 242, 0.12) 44%);
+.time-picker-item.active {
+  color: #514149;
+  font-weight: 600;
 }
 
 .time-separator {
