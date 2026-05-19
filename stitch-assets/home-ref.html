@@ -1,0 +1,292 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-container": "#e6ebe5",
+                    "on-surface-variant": "#4d4546",
+                    "surface-tint": "#665c5e",
+                    "on-error": "#ffffff",
+                    "primary-fixed": "#eedfe1",
+                    "surface-dim": "#ded9d8",
+                    "on-primary": "#ffffff",
+                    "surface-container-high": "#ece7e6",
+                    "outline-variant": "#d0c3c5",
+                    "on-tertiary-fixed-variant": "#434844",
+                    "tertiary-fixed": "#dfe4de",
+                    "inverse-primary": "#d1c3c5",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-fixed": "#1f1b15",
+                    "surface-container": "#f2edec",
+                    "on-error-container": "#93000a",
+                    "surface-container-highest": "#e6e1e1",
+                    "outline": "#7f7576",
+                    "inverse-surface": "#323030",
+                    "secondary": "#645d56",
+                    "secondary-fixed": "#ebe1d7",
+                    "secondary-container": "#ebe1d7",
+                    "background": "#fef8f8",
+                    "surface-bright": "#fef8f8",
+                    "secondary-fixed-dim": "#cec5bc",
+                    "surface-variant": "#e6e1e1",
+                    "error-container": "#ffdad6",
+                    "on-primary-fixed-variant": "#4e4446",
+                    "primary-container": "#f5e6e8",
+                    "tertiary-fixed-dim": "#c3c8c2",
+                    "primary": "#665c5e",
+                    "on-background": "#1d1b1b",
+                    "inverse-on-surface": "#f5efef",
+                    "on-surface": "#1d1b1b",
+                    "on-primary-fixed": "#211a1b",
+                    "on-tertiary-fixed": "#181d19",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-low": "#f8f2f2",
+                    "on-secondary-container": "#6a635c",
+                    "tertiary": "#5a605b",
+                    "primary-fixed-dim": "#d1c3c5",
+                    "on-tertiary-container": "#656a65",
+                    "error": "#ba1a1a",
+                    "on-primary-container": "#716668",
+                    "surface": "#fef8f8",
+                    "on-secondary-fixed-variant": "#4c463f"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "page-margin": "24px",
+                    "section-gap": "32px",
+                    "card-padding": "20px",
+                    "tap-target-min": "48px",
+                    "element-gap": "12px"
+            },
+            "fontFamily": {
+                    "display": ["Plus Jakarta Sans"],
+                    "label-md": ["Plus Jakarta Sans"],
+                    "body-md": ["Plus Jakarta Sans"],
+                    "headline-lg": ["Plus Jakarta Sans"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "label-sm": ["Plus Jakarta Sans"],
+                    "body-lg": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "display": ["30px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-md": ["13px", {"lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "body-md": ["15px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "label-sm": ["11px", {"lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "600"}],
+                    "body-lg": ["17px", {"lineHeight": "26px", "fontWeight": "400"}],
+                    "display-mobile": ["26px", {"lineHeight": "34px", "fontWeight": "700"}],
+                    "headline-md-mobile": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                    "label-sm-mobile": ["10px", {"lineHeight": "14px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #fef8f8;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .organic-pattern {
+            background-image: radial-gradient(#eedfe1 0.5px, transparent 0.5px);
+            background-size: 16px 16px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="font-body-md text-on-surface">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky z-[60] bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-md flex justify-between items-center py-4 w-full pl-page-margin">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-primary-container flex items-center justify-center">
+<img class="w-full h-full object-cover" data-alt="A soft focus, close-up photograph of a newborn baby's peaceful sleeping face. The lighting is warm and ethereal, highlighting the gentle curves of the baby's cheeks and eyelashes. The background is a cream-colored, soft knitted texture, echoing the healing minimalism and slow-living aesthetic of the app's identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA48dCcPChxPzoEISuk-NRFhCP9noHOcFBn2PXFDa1od3cgrpiPdeW4q80tutx_H_ElBmeQPCoJKOb2JQ_BjuyXmLgq3VBOtv4kWwzOTavQnQ__wJWjqq17NR1p63P95Q4GYeI5knoYcF0SO9LUbYgmbelYiYBs_LSJdFu2MABWDHz0fevGTQGuoAPu47tTx-AK-6xJveVorcfTCRmYUWKTgGeY0HBE1WCwHbGD-By13Ef8BWNzsrN0LzqI8B001OAECn_Xnq0pbuk6">
+</div>
+<h1 class="font-display text-headline-md-mobile text-primary dark:text-primary-fixed">Day 45</h1>
+</div>
+<div class="flex items-center gap-2 px-2 py-1 bg-black/5 dark:bg-white/10 rounded-full border border-black/10 dark:border-white/10 h-[32px] w-[87px] mr-[7px] justify-around">
+<span class="material-symbols-outlined text-[18px] text-on-surface" style="font-variation-settings: &quot;FILL&quot; 1;">more_horiz</span>
+<div class="h-4 w-px bg-black/10 dark:bg-white/10"></div>
+<span class="material-symbols-outlined text-[18px] text-on-surface">radio_button_checked</span>
+</div></header>
+<main class="px-page-margin pb-32">
+<!-- Baby Status Card -->
+<section class="mt-4">
+<div class="relative w-full aspect-[4/3] rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.04)] bg-primary-container/30 organic-pattern p-card-padding flex flex-col justify-end">
+<div class="absolute top-4 right-4 bg-white/60 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span class="font-label-sm text-tertiary">正在午睡中</span>
+</div>
+<div class="relative z-10">
+<h2 class="font-display text-display-mobile text-primary mb-1">宝宝今天第45天</h2>
+<p class="font-body-md text-on-surface-variant opacity-80">处于快速成长期 · 需要充足睡眠</p>
+</div>
+<div class="absolute inset-0 z-0 pointer-events-none flex items-center justify-center opacity-20">
+<!-- Illustration placeholder -->
+<span class="material-symbols-outlined text-[120px] text-primary" data-icon="child_care" style="font-variation-settings: &quot;FILL&quot; 0;">child_care</span>
+</div>
+</div>
+</section>
+<!-- Today's Focus -->
+<section class="mt-section-gap">
+<div class="bg-secondary-container rounded-lg p-card-padding flex justify-between items-center">
+<div class="flex flex-col gap-1">
+<span class="font-label-sm text-on-secondary-container/70">距离上次喂奶</span>
+<span class="font-headline-md text-on-secondary-container">2.5小时</span>
+</div>
+<div class="h-10 w-px bg-on-secondary-container/10"></div>
+<div class="flex flex-col gap-1 text-right">
+<span class="font-label-sm text-on-secondary-container/70">当前状态</span>
+<span class="font-headline-md text-on-secondary-container">正在午睡</span>
+</div>
+</div>
+</section>
+<!-- Quick Record Buttons -->
+<section class="mt-section-gap">
+<div class="grid grid-cols-4 gap-4">
+<div class="flex flex-col items-center gap-2">
+<button class="w-full aspect-square bg-primary-container rounded-full flex items-center justify-center text-on-primary-container active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[28px]" data-icon="restaurant">restaurant</span>
+</button>
+<span class="font-label-md text-on-surface-variant">喂奶</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<button class="w-full aspect-square bg-tertiary-container rounded-full flex items-center justify-center text-on-tertiary-container active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[28px]" data-icon="bedtime">bedtime</span>
+</button>
+<span class="font-label-md text-on-surface-variant">睡觉</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<button class="w-full aspect-square bg-secondary-fixed rounded-full flex items-center justify-center text-on-secondary-container active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[28px]" data-icon="baby_changing_station">baby_changing_station</span>
+</button>
+<span class="font-label-md text-on-surface-variant">尿布</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<button class="w-full aspect-square bg-primary-fixed rounded-full flex items-center justify-center text-on-primary-fixed-variant active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[28px]" data-icon="device_thermostat">device_thermostat</span>
+</button>
+<span class="font-label-md text-on-surface-variant">体温</span>
+</div>
+</div>
+</section>
+<!-- Today's Suggestion -->
+<section class="mt-section-gap">
+
+</section>
+<!-- Today's To-Do List -->
+<section class="mt-section-gap">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-headline-md text-primary">今日待办</h3>
+<button class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[20px]" data-icon="add">add</span>
+</button>
+</div>
+<div class="bg-surface-container-low rounded-xl p-card-padding shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-primary-container/20">
+<div class="space-y-4">
+<div class="flex items-center gap-3">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary bg-surface-container-lowest" id="todo1" type="checkbox">
+<label class="font-body-md text-on-surface flex-1" for="todo1">给奶瓶消毒</label>
+</div>
+<div class="flex items-center gap-3">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary bg-surface-container-lowest" id="todo2" type="checkbox">
+<label class="font-body-md text-on-surface flex-1" for="todo2">补充维生素D</label>
+</div>
+<div class="flex items-center gap-3 opacity-50">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary bg-surface-container-lowest" id="todo3" type="checkbox">
+<label class="font-body-md text-on-surface flex-1 line-through" for="todo3">记录早晨体温</label>
+</div>
+</div>
+</div>
+</section>
+<!-- Recent Activities -->
+<section class="mt-section-gap">
+<div class="flex justify-between items-end mb-4">
+<h3 class="font-headline-md text-primary">最近动态</h3>
+<span class="font-label-sm text-outline">查看全部</span>
+</div>
+<div class="space-y-3">
+<div class="flex items-center gap-4 bg-surface-container-lowest p-4 rounded-lg shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="restaurant">restaurant</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between">
+<span class="font-label-md text-on-surface">母乳喂养</span>
+<span class="font-label-sm text-outline">12:30</span>
+</div>
+<p class="font-label-sm text-on-surface-variant mt-0.5">左侧 15分钟, 右侧 10分钟</p>
+</div>
+</div>
+<div class="flex items-center gap-4 bg-surface-container-lowest p-4 rounded-lg shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
+<div class="w-10 h-10 rounded-full bg-tertiary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-tertiary text-[20px]" data-icon="bedtime">bedtime</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between">
+<span class="font-label-md text-on-surface">小睡结束</span>
+<span class="font-label-sm text-outline">11:15</span>
+</div>
+<p class="font-label-sm text-on-surface-variant mt-0.5">持续时长 1小时20分钟</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Weekly Summary Entry -->
+<section class="mt-8">
+<div class="bg-primary/5 rounded-lg px-4 py-3 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary opacity-60" data-icon="analytics">analytics</span>
+<span class="font-label-md text-primary">本周成长报告已生成</span>
+</div>
+<span class="material-symbols-outlined text-primary/40 text-[20px]" data-icon="chevron_right">chevron_right</span>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full h-[84px] flex justify-around items-center px-2 pb-safe bg-surface-container-low dark:bg-surface-container-highest shadow-[0_-4px_20px_rgba(0,0,0,0.04)] rounded-t-xl z-50">
+<a class="flex flex-col items-center justify-center bg-primary-container dark:bg-on-primary-fixed-variant text-on-primary-container dark:text-primary-fixed rounded-full px-4 py-2 transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="home" style="font-variation-settings: &quot;FILL&quot; 1;">home</span>
+<span class="font-label-sm text-label-sm-mobile mt-0.5">首页</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-2 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+<span class="font-label-sm text-label-sm-mobile mt-0.5">快速记录</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-2 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="timeline">timeline</span>
+<span class="font-label-sm text-label-sm-mobile mt-0.5">成长时间线</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-2 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="favorite">favorite</span>
+<span class="font-label-sm text-label-sm-mobile mt-0.5">今日陪伴</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-2 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-sm text-label-sm-mobile mt-0.5">我的</span>
+</a>
+</nav>
+
+
+</body></html>

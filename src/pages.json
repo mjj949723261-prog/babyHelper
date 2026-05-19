@@ -1,0 +1,73 @@
+{
+  "pages": [
+    {
+      "path": "pages/home/index",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/profile/index",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/record/index",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/timeline/index",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/companion/index",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/todos/index",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    }
+  ],
+  "tabBar": {
+    "color": "#9f8f95",
+    "selectedColor": "#f26a93",
+    "backgroundColor": "#fffdfc",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/home/index",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/timeline/index",
+        "text": "成长时间线"
+      },
+      {
+        "pagePath": "pages/record/index",
+        "text": "快速记录"
+      },
+      {
+        "pagePath": "pages/companion/index",
+        "text": "今日陪伴"
+      },
+      {
+        "pagePath": "pages/profile/index",
+        "text": "我的"
+      }
+    ]
+  },
+  "globalStyle": {
+    "navigationStyle": "custom",
+    "backgroundColor": "#fff7f6",
+    "backgroundTextStyle": "light"
+  }
+}
